@@ -30,20 +30,34 @@ def main():
         bbb: hex = (opcode & 0x1C) >> 2;
         cc: hex = opcode & 0x03;
     
-    if cc == 1:
-        if aaa == 1:
-            ORA(mem[pc+1])
-            
+    # Group one instructions
+    if cc == 0b01:
+        if aaa == 0b000:
+            ORA(mem[pc+1]);
+        elif aaa == 0b001:
+            AND(mem[pc+1]);
+        elif aaa == 0b010:
+            EOR(mem[pc+1]);
+        elif aaa == 0b011:
+            ADC(mem[pc+1]);
+        elif aaa == 0b100:
+            STA(mem[pc+1]);
+        elif aaa == 0b110:
+            LDA(mem[pc+1]);
+        elif aaa == 0b111:
+            CMP(mem[pc+1]);
 
-    elif cc == 2:
-        if aaa == 5:
-            # immediate LDX
-            x[0] = mem[pc+1];
+    # Group two instructions
+    elif cc == 0b10:
+        print("Group 2 instructions have not been implemented yet.")
     
-    elif cc == 3:
-        if bbb == 4:
+    # Group three and conditional branching instructions
+    elif cc == 0b11:
+        # Conditional branching instructions
+        if bbb == 0b100:
             print("CB");
-        elif bbb == 0 and not aaa & 0x4:
+        # Group three instructions
+        elif bbb == 0b000 and not aaa & 0b100:
             print("G3");
     
     pc+=2;
