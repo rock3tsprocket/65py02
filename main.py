@@ -1,11 +1,11 @@
-import instructions
+from instructions import *
 
 def main():
     # Registers and memory
     a = bytearray(1);
     x = bytearray(1);
     y = bytearray(1);
-    pc: int = 0; 
+    pc = 0; 
     sp = bytearray(1);
     flags = bytearray(1);
     addr = bytearray(2);
@@ -16,53 +16,100 @@ def main():
     mem[0x0002] = 0x09;
     mem[0x0003] = 0x41;
 
-    opcode: bin = mem[pc];
-    print(opcode)
-    lownibble = opcode >> 4;
-    highnibble = opcode & 0x0F;
+    # Declaring bits of the opcode
+    aaa = None
+    bbb = None
+    cc = None
 
-    if lownibble == 8:
-        print("SB1 logic");
-    elif lownibble == 0xA and highnibble == 7:
-        print("SB2 logic");
-    else:
-        aaa: hex = (opcode & 0xE0) >> 5;
-        bbb: hex = (opcode & 0x1C) >> 2;
-        cc: hex = opcode & 0x03;
-    
-    # Group one instructions
-    if cc == 0b01:
-        if aaa == 0b000:
-            ORA(mem[pc+1]);
-        elif aaa == 0b001:
-            AND(mem[pc+1]);
-        elif aaa == 0b010:
-            EOR(mem[pc+1]);
-        elif aaa == 0b011:
-            ADC(mem[pc+1]);
-        elif aaa == 0b100:
-            STA(mem[pc+1]);
-        elif aaa == 0b110:
-            LDA(mem[pc+1]);
-        elif aaa == 0b111:
-            CMP(mem[pc+1]);
+    finishrun = False
+    while True:
+        opcode = mem[pc];
+        print(hex(opcode))
+        lownibble = opcode >> 4;
+        highnibble = opcode & 0x0F;
 
-    # Group two instructions
-    elif cc == 0b10:
-        print("Group 2 instructions have not been implemented yet.")
+        if lownibble == 8:
+            print("SB1 logic");
+        elif lownibble == 0xA and highnibble > 9:
+            print("SB2 logic");
+        else:
+            aaa = (opcode & 0xE0) >> 5;
+            bbb = (opcode & 0x1C) >> 2;
+            cc = opcode & 0x03;
     
-    # Group three and conditional branching instructions
-    elif cc == 0b11:
-        # Conditional branching instructions
-        if bbb == 0b100:
-            print("CB");
-        # Group three instructions
-        elif bbb == 0b000 and not aaa & 0b100:
-            print("G3");
+        # Group one instructions
+        if cc == 0b01:
+            if aaa == 0b000:
+                ORA(mem[pc+1], bbb, a);
+                pc+=2;
+            elif aaa == 0b001:
+                AND(mem[pc+1], bbb, a);
+                pc+=2;
+            elif aaa == 0b010:
+                EOR(mem[pc+1], bbb, a);
+                pc+=2;
+            elif aaa == 0b011:
+                ADC(mem[pc+1], bbb, a, flags);
+                pc+=2;
+            elif aaa == 0b100:
+                STA(mem[pc+1], bbb, a);
+                pc+=2;
+            elif aaa == 0b110:
+                LDA(mem[pc+1], bbb, a);
+            elif aaa == 0b111:
+                CMP(mem[pc+1], bbb, a, flags);
+                pc+=2;
     
-    pc+=2;
-    
-    print(f"A: {a[0]}\nX: {x[0]}\nY: {y[0]}\nProgram Counter: {pc}\nStack Pointer: {sp[0]}\nCPU flags: {bin(flags[0])}\nAddress bus: {addr[0]}{addr[1]}");
+        # Group two instructions
+        elif cc == 0b10:
+            if aaa == 0b000:
+                ASL(mem[pc+1], bbb, a, flags);
+                pc+=2;
+        
+        # Group three and conditional branching instructions
+        elif cc == 0b11:
+            # Conditional branching instructions
+            if bbb == 0b100:
+                if aaa == 0b000:
+                    print("Break encountered");
+                    break;
+            # Group three instructions
+            elif bbb == 0b000 and not aaa & 0b100:
+                print("Group three instructions are not implemented");
+        
+
+        while True:
+            if finishrun:
+                pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2
+                break;
+            
+            try:
+                whattodo = input("What do you want to do? (type 'help' for a list)\n");
+            except (KeyboardInterrupt, EOFError):
+                print("\nInterrupted")
+                exit()
+
+            if whattodo == "help":
+                print("'help': Show this list\n'registers': Dump register contents\n'memory': Dump memory\n 'step': Advance by one instruction\n'run': Run the program until it reaches a breakpoint\n'exit': Exit");
+            elif whattodo == "registers":
+                print(f"A: {hex(a[0])}\n"
+                      f"X: {hex(x[0])}\n"
+                      f"Y: {hex(y[0])}\n"
+                      f"Program Counter: {hex(pc)}\n"
+                      f"Stack Pointer: {hex(sp[0])}\n"
+                      f"CPU flags: {format(flags[0], '#010b')}\n");
+            elif whattodo == "memory":
+                print("Lorem ipsum dolor sit amet");
+            elif whattodo == "step":
+                pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2;
+                break;
+            elif whattodo == "run":
+                finishrun = True;
+            elif whattodo == "exit":
+                exit();
+            else: 
+                print("Invalid option");
+                continue;
 
 if __name__ == "__main__":
     main()
