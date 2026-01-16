@@ -90,7 +90,7 @@ def main():
                 exit()
 
             if whattodo == "help":
-                print("'help': Show this list\n'registers': Dump register contents\n'memory': Dump memory\n 'step': Advance by one instruction\n'run': Run the program until it reaches a breakpoint\n'exit': Exit");
+                print("'help': Show this list\n'registers': Dump register contents\n'memory': Dump memory\n'step': Advance by one instruction\n'run': Run the program until it reaches a breakpoint\n'exit': Exit");
             elif whattodo == "registers":
                 print(f"A: {hex(a[0])}\n"
                       f"X: {hex(x[0])}\n"
@@ -99,7 +99,13 @@ def main():
                       f"Stack Pointer: {hex(sp[0])}\n"
                       f"CPU flags: {format(flags[0], '#010b')}\n");
             elif whattodo == "memory":
-                print("Lorem ipsum dolor sit amet");
+                for i in range(0x0, 0x1000):
+                    if str(hex(i))[-1] == "0":
+                        print(f"\n {hex(i)}: ", end="");
+                        continue;
+                    print(f"{hex(mem[i])[2:4]} ", end=" ");
+
+                print("")
             elif whattodo == "step":
                 pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2;
                 break;
