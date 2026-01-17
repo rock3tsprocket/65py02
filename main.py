@@ -92,7 +92,14 @@ def main():
                 exit();
 
             if whattodo == "help":
-                print("'help': Show this list\n'registers': Dump register contents\n'memory': Dump memory\n'step': Advance by one instruction\n'run': Run the program until it reaches a breakpoint\n'exit': Exit");
+                print("'help': Show this list\n"
+                      "'registers': Dump register contents\n"
+                      "'memory': Dump memory\n"
+                      "'step': Advance by one instruction\n"
+                      "'run': Run the program until it reaches a break opcode\n"
+                      "'reset': Reset registers\n"
+                      "'opcode': Print opcode to be executed\n"
+                      "'exit': Exit");
             elif whattodo == "registers":
                 print(f"A: {hex(a[0])}\n"
                       f"X: {hex(x[0])}\n"
@@ -106,11 +113,17 @@ def main():
                         print(f"\n {hex(i)}: ", end="");
                         continue;
                     print(f"{hex(mem[i])[2:4]} ", end=" ");
-
                 print("")
             elif whattodo == "step":
                 pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2;
                 break;
+            elif whattodo == "reset":
+                a[0]     = 0;
+                x[0]     = 0;
+                y[0]     = 0;
+                pc       = 0;
+                sp[0]    = 0;
+                flags[0] = 0;
             elif whattodo == "run":
                 finishrun = True;
             elif whattodo == "exit":
@@ -118,6 +131,7 @@ def main():
             else: 
                 print("Invalid option");
                 continue;
+            
 
 if __name__ == "__main__":
     main()
