@@ -24,7 +24,6 @@ def main():
     finishrun = False
     while True:
         opcode = mem[pc];
-        print(hex(opcode))
         lownibble = opcode >> 4;
         highnibble = opcode & 0x0F;
 
@@ -71,14 +70,17 @@ def main():
             # Conditional branching instructions
             if bbb == 0b100:
                 if aaa == 0b000:
-                    print("Break encountered");
-                    break;
+                    pass # implemented in CLI thingy
+
             # Group three instructions
             elif bbb == 0b000 and not aaa & 0b100:
                 print("Group three instructions are not implemented");
         
 
         while True:
+            if opcode == 0: # BRK
+                print("Break encountered\n");
+
             if finishrun:
                 pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2
                 break;
@@ -86,8 +88,8 @@ def main():
             try:
                 whattodo = input("What do you want to do? (type 'help' for a list)\n");
             except (KeyboardInterrupt, EOFError):
-                print("\nInterrupted")
-                exit()
+                print("\nInterrupted");
+                exit();
 
             if whattodo == "help":
                 print("'help': Show this list\n'registers': Dump register contents\n'memory': Dump memory\n'step': Advance by one instruction\n'run': Run the program until it reaches a breakpoint\n'exit': Exit");
