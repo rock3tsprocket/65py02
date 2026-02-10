@@ -17,13 +17,14 @@ def main():
     mem[0x0003] = 0x41;
 
     # Declaring bits of the opcode
-    aaa = None
-    bbb = None
-    cc = None
+    aaa = None;
+    bbb = None;
+    cc = None;
 
     finishrun = False
     while True:
         opcode = mem[pc];
+        print(opcode, pc)
         lownibble = opcode >> 4;
         highnibble = opcode & 0x0F;
 
@@ -39,6 +40,7 @@ def main():
         # Group one instructions
         if cc == 0b01:
             if aaa == 0b000:
+                print("dee")
                 ORA(mem[pc+1], bbb, a);
                 pc+=2;
             elif aaa == 0b001:
@@ -55,6 +57,7 @@ def main():
                 pc+=2;
             elif aaa == 0b110:
                 LDA(mem[pc+1], bbb, a);
+                pc+=2;
             elif aaa == 0b111:
                 CMP(mem[pc+1], bbb, a, flags);
                 pc+=2;
@@ -70,7 +73,7 @@ def main():
             # Conditional branching instructions
             if bbb == 0b100:
                 if aaa == 0b000:
-                    pass # implemented in CLI thingy
+                    pass; # implemented in CLI thingy
 
             # Group three instructions
             elif bbb == 0b000 and not aaa & 0b100:
@@ -78,15 +81,18 @@ def main():
         
 
         while True:
-            if opcode == 0: # BRK
-                print("Break encountered\n");
-
             if finishrun:
-                pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2
+                if opcode == 0:
+                    print("Break encountered");
+                    exit();
+                #pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2
                 break;
             
+            if opcode == 0: # BRK
+                print("Break encountered\n");
+            
             try:
-                whattodo = input("What do you want to do? (type 'help' for a list)\n");
+                whattodo = input("What do you want to do? (type 'help' for help)\n> ");
             except (KeyboardInterrupt, EOFError):
                 print("\nInterrupted");
                 exit();
@@ -115,7 +121,7 @@ def main():
                     print(f"{hex(mem[i])[2:4]} ", end=" ");
                 print("")
             elif whattodo == "step":
-                pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2;
+                #pc = pc+1 if lownibble == 8 or (lownibble == 0xA and highnibble > 9) else pc+2;
                 break;
             elif whattodo == "reset":
                 a[0]     = 0;

@@ -25,6 +25,7 @@ def ORA(num, bbb, A):
     elif bbb == 0b100:
         A[0] = A[0] | num;
     a = A;
+    return;
 
 # AND Accumulator (AAA = 0b001)
 def AND(num, bbb, A):
@@ -39,6 +40,7 @@ def AND(num, bbb, A):
     elif bbb == 0b100:
         A[0] = A[0] & num;
     a = A;
+    return;
 
 # EOR/XOR Accumulator (AAA = 0b010)
 def EOR(num, bbb, A):
@@ -53,6 +55,7 @@ def EOR(num, bbb, A):
     elif bbb == 0b100:
         A[0] = A[0] ^ num;
     a = A;
+    return;
 
 # Add With Carry (to accumulator) (AAA = 0b011)
 def ADC(num, bbb, A, Flags):
@@ -79,14 +82,17 @@ def ADC(num, bbb, A, Flags):
             Flags[0] = Flags[0] | 0b00000001;
     a = A;
     flags = Flags;
+    return;
 
 # Store Accumulator (AAA = 0b100)
 def STA(num, bbb, A):
     print("Not implemented (STA)");
+    return;
 
 # Load value to Accumulator (AAA = 0b101)
 def LDA(num, bbb, A):
     print("Not implemented (LDA)");
+    return;
 
 # Compare value to Accumulator (AAA = 0b110)
 def CMP(num, bbb, A, Flags):
@@ -109,6 +115,7 @@ def CMP(num, bbb, A, Flags):
         else:
             pass;
     flags = Flags;
+    return;
 
 # Subtract with carry (from accumulator) (AAA = 0b111)
 def SBC(num, bbb, A):
@@ -131,6 +138,7 @@ def SBC(num, bbb, A):
         except ValueError:
             A[0] = 0xFF + A[0] - num;
     a = A;
+    return;
 
 
 """ Group two instructions """
@@ -162,6 +170,7 @@ def ASL(num, bbb, A, Flags):
         mem[num+x[0]%0xFFFF] = mem[(num+x[0])%0xFFFF] << 1;
         Flags[0] = Flags[0] | 0b00000010 if not mem[(num+x)%0xFFFF] else flags[0] & 0b11111101;
     a = A;
+    return;
 
 
 """ Conditional branching instructions """
@@ -175,21 +184,25 @@ def ASL(num, bbb, A, Flags):
 def CLC(Flags):
     global flags;
     Flags[0] = Flags[0] & 0b11111110;
+    return;
 
 # Set Carry flag (0x38)
 def SEC(Flags):
     global flags;
     Flags[0] = Flags[0] | 0b00000001;
+    return;
 
 # Clear Interrupt flag (0x58)
 def CLI(Flags):
     global flags;
     Flags[0] = Flags[0] & 0b11111011;
+    return;
 
 # Set Interrupt flag (0x78)
 def SEI(Flags):
     global flags;
     Flags[0] = Flags[0] | 0b00000100;
+    return;
 
 # Transfer register Y to Accumulator (0x98)
 def TYA(A):
@@ -202,12 +215,14 @@ def CLV(Flags):
     global flags;
     Flags[0] = Flags[0] & 0b10111111;
     flags = Flags
+    return;
 
 # Clear Decimal flag (0xD8)
 def CLD(Flags):
     global flags;
     Flags[0] = flags[0] & 0b11110111;
     flags = Flags
+    return;
 
 # No Operation (0xEA)
 def NOP():
