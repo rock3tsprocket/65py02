@@ -24,7 +24,7 @@ def main():
     finishrun = False
     while True:
         opcode = mem[pc];
-        print(opcode, pc)
+        print(hex(opcode), hex(pc))
         lownibble = opcode >> 4;
         highnibble = opcode & 0x0F;
 
@@ -55,11 +55,14 @@ def main():
             elif aaa == 0b100:
                 STA(mem[pc+1], bbb, a);
                 pc+=2;
-            elif aaa == 0b110:
+            elif aaa == 0b101:
                 LDA(mem[pc+1], bbb, a);
                 pc+=2;
-            elif aaa == 0b111:
+            elif aaa == 0b110:
                 CMP(mem[pc+1], bbb, a, flags);
+                pc+=2;
+            elif aaa == 0b111:
+                SBC(mem[pc+1], bbb, a, flags);
                 pc+=2;
     
         # Group two instructions
